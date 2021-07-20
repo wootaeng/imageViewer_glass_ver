@@ -1,0 +1,2 @@
+rootProject.name = "wattViewer2"
+include ':app'

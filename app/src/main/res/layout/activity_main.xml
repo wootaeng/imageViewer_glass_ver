@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/head"
+        android:layout_width="match_parent"
+        android:layout_height="100dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|start"
+            android:text="@string/app_name"
+            android:textColor="@color/black"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="10dp"/>
+
+    </androidx.cardview.widget.CardView>
+
+
+    <Button
+        android:id="@+id/localBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/head"
+        android:text="갤러리" />
+
+    <Button
+        android:id="@+id/serverBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/head"
+        android:layout_marginLeft="75dp"
+        android:layout_toRightOf="@id/localBtn"
+        android:text="서버" />
+
+</RelativeLayout>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">와트뷰어</string>
+    <string name="folderName">Folder Name</string>
+    <string name="appName">wattViewer</string>
+    <string name="empty">No Images on this device</string>
+    <string name="photos_name">Photos</string>
+</resources>

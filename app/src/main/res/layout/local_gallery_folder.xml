@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/head"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|start"
+                android:text="Local Gallery"
+                android:textColor="@color/black"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                android:layout_marginLeft="20dp"
+                android:layout_marginStart="10dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/lo_folder_recyclV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/head">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/empty"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+</FrameLayout>
