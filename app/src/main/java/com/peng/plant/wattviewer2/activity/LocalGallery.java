@@ -17,8 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.peng.plant.wattviewer2.MainActivity;
-import com.peng.plant.wattviewer2.MarginDecoration;
+import com.peng.plant.wattviewer2.WidthDecoration;
 import com.peng.plant.wattviewer2.R;
 import com.peng.plant.wattviewer2.adapter.LocalImageAdapter;
 import com.peng.plant.wattviewer2.adapter.LocalfolderAdapter;
@@ -49,9 +48,9 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
         empty = findViewById(R.id.empty);
 
         recyclerView = findViewById(R.id.lo_folder_recyclV);
-        recyclerView.addItemDecoration(new MarginDecoration(this));
-        recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+//        recyclerView.addItemDecoration(new WidthDecoration(1));
+//        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         ArrayList<LocalFolderData> folders = getPicturePaths();
 
         if (folders.isEmpty()){
@@ -118,8 +117,10 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
     }
 
 
+
+
     @Override
-    public void onPicClicked(String pictureFolderPath, String folderName) {
+    public void onfolderClicked(String pictureFolderPath, String folderName) {
         Intent move = new Intent(LocalGallery.this,LocalImageList.class);
         move.putExtra("folderPath",pictureFolderPath);
         move.putExtra("folderName",folderName);
@@ -129,7 +130,9 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
     }
 
     @Override
-    public void onPicClicked(LocalImageAdapter.ViewHolder holder, int position, ArrayList<LocalimageData> pictureList) {
+    public void onPicClicked(String imageUri, String picturePath) {
 
     }
+
+
 }

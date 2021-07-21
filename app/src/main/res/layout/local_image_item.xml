@@ -8,19 +8,12 @@
 
     <ImageView
         android:id="@+id/fileimg"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="410px"
+        android:layout_height="270px"
         android:padding="5dp"
         android:src="@mipmap/ic_launcher"/>
 
-    <TextView
-        android:id="@+id/filename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textAlignment="center"
-        android:layout_gravity="center"
-        android:textSize="20sp"/>
+
 
 
 </LinearLayout>

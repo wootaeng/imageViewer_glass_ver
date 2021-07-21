@@ -4,8 +4,8 @@ public class LocalimageData {
 
     private String picturName;
     private String picturePath;
-    private  String pictureSize;
-    private  String imageUri;
+    private String pictureSize;
+    private String imageUri;
     private Boolean selected = false;
 
     public LocalimageData(String picturName, String picturePath, String pictureSize, String imageUri) {

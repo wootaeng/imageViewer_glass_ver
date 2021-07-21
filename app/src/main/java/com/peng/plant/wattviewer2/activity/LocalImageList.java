@@ -1,20 +1,24 @@
 package com.peng.plant.wattviewer2.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
-import com.peng.plant.wattviewer2.MarginDecoration;
 import com.peng.plant.wattviewer2.R;
 import com.peng.plant.wattviewer2.adapter.LocalImageAdapter;
+import com.peng.plant.wattviewer2.data.CenterScrollListener;
 import com.peng.plant.wattviewer2.data.LocalimageData;
 import com.peng.plant.wattviewer2.data.ScrollZoomLayoutManager;
 import com.peng.plant.wattviewer2.data.TiltScrollController;
@@ -23,6 +27,8 @@ import com.peng.plant.wattviewer2.itemClickListener;
 import java.util.ArrayList;
 
 public class LocalImageList extends AppCompatActivity implements itemClickListener , TiltScrollController.ScrollListener{
+    private final String TAG = this.getClass().getSimpleName();
+
 
     RecyclerView imageRecycler;
     ArrayList<LocalimageData> allimages;
@@ -31,6 +37,11 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
     TextView folderName;
     TiltScrollController mTiltScrollController;
     ScrollZoomLayoutManager scrollZoomLayoutManager;
+    SnapHelper snapHelper;
+    ImageView select_box;
+    Button select;
+    LocalImageAdapter adapter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +53,20 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
 
         folderPath = getIntent().getStringExtra("folderPath");
         allimages = new ArrayList<>();
+
+
+        select_box = findViewById(R.id.select_box);
+        select = findViewById(R.id.select);
         imageRecycler = findViewById(R.id.recycler);
+        snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(imageRecycler);
         mTiltScrollController = new TiltScrollController(getApplicationContext(),this);
-//        scrollZoomLayoutManager = new ScrollZoomLayoutManager(this, Dp2px(5));
-        imageRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        imageRecycler.addItemDecoration(new MarginDecoration(this));
-        imageRecycler.hasFixedSize();
+        scrollZoomLayoutManager = new ScrollZoomLayoutManager(this, Dp2px(5));
+//        imageRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+//        imageRecycler.addItemDecoration(new MarginDecoration(this));
+//        imageRecycler.hasFixedSize();
+        imageRecycler.addOnScrollListener(new CenterScrollListener());
+        imageRecycler.setLayoutManager(scrollZoomLayoutManager);
         load = findViewById(R.id.loader);
 
         if (allimages.isEmpty()){
@@ -55,12 +74,22 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
             allimages = getAllImagesByFolder(folderPath);
             imageRecycler.setAdapter(new LocalImageAdapter(allimages, LocalImageList.this, this));
             load.setVisibility(View.GONE);
-            onTilt(80,0,1);
+            select_box.setVisibility(View.VISIBLE);
+            select.setVisibility(View.VISIBLE);
+
+
+
+
+
+
         } else {
 
         }
 
+
     }
+
+
 
     private ArrayList<LocalimageData> getAllImagesByFolder(String path) {
 
@@ -100,15 +129,7 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
     }
 
 
-    @Override
-    public void onPicClicked(String pictureFolderPath, String folderName) {
 
-    }
-
-    @Override
-    public void onPicClicked(LocalImageAdapter.ViewHolder holder, int position, ArrayList<LocalimageData> pictureList) {
-
-    }
 
 
     @Override
@@ -122,4 +143,23 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth() / 6), 0)
 
     }
+
+
+    @Override
+    public void onfolderClicked(String pictureFolderPath, String folderName) {
+
+    }
+
+    @Override
+    public void onPicClicked(String imageUri, String picturePath) {
+
+        Intent move = new Intent(LocalImageList.this, LocalImage.class);
+        move.putExtra("imageUri",imageUri);
+        move.putExtra("picturePath",picturePath);
+
+        startActivity(move);
+    }
+
+
 }
+

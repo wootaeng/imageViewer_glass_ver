@@ -5,4 +5,5 @@
     <dimen name="folder_column_width">120dp</dimen>
 
     <dimen name="picture_column_width">90dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.peng.plant.wattviewer2">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -13,16 +13,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WattViewer2">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".activity.LocalImage"
+            android:label="@string/title_activity_local_image"
+            android:theme="@style/Theme.WattViewer2.NoActionBar"></activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ServerGallery" />
-        <activity android:name=".activity.LocalImageList" />
-        <activity android:name=".activity.LocalGallery" />
+        <activity
+            android:name=".activity.ServerGallery"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.LocalImageList"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".activity.LocalGallery"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

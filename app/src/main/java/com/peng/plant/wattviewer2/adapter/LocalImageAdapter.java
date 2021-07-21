@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,9 +38,13 @@ public class LocalImageAdapter extends RecyclerView.Adapter<LocalImageAdapter.Vi
     public LocalImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = inflater.inflate(R.layout.local_image_item, parent, false);
+<<<<<<< HEAD
         ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
         layoutParams.height = (int) (parent.getHeight() * 0.3);
         v.setLayoutParams(layoutParams);
+=======
+
+>>>>>>> 04970ab (imageList 구현완료)
         return new ViewHolder(v);
     }
 
@@ -54,7 +59,7 @@ public class LocalImageAdapter extends RecyclerView.Adapter<LocalImageAdapter.Vi
         holder.picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                picListerner.onPicClicked(holder,position,imageList);
+                picListerner.onPicClicked(image.getImageUri(), image.getPicturePath());
             }
         });
 
@@ -68,12 +73,13 @@ public class LocalImageAdapter extends RecyclerView.Adapter<LocalImageAdapter.Vi
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView picture;
-        TextView title;
+        Button select;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             picture = itemView.findViewById(R.id.fileimg);
-            title = itemView.findViewById(R.id.filename);
+            select = itemView.findViewById(R.id.select);
         }
     }
 }

@@ -57,7 +57,7 @@ public class LocalfolderAdapter extends RecyclerView.Adapter<LocalfolderAdapter.
         holder.folderPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listenToClick.onPicClicked(folder.getPath(),folder.getFolderName());
+                listenToClick.onfolderClicked(folder.getPath(),folder.getFolderName());
             }
         });
     }
