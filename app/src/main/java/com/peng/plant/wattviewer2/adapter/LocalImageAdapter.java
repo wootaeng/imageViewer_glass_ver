@@ -52,16 +52,26 @@ public class LocalImageAdapter extends RecyclerView.Adapter<LocalImageAdapter.Vi
     public void onBindViewHolder(@NonNull LocalImageAdapter.ViewHolder holder, int position) {
         final LocalimageData image = imageList.get(position);
 
-        Glide.with(context).load(image.getPicturePath()).apply(new RequestOptions().centerCrop()).into(holder.picture);
-
-        setTransitionName(holder.picture, String.valueOf(position) + "_image");
+        Glide.with(holder.itemView).load(image.getPicturePath()).apply(new RequestOptions().centerCrop()).into(holder.picture);
 
         holder.picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                picListerner.onPicClicked(image.getImageUri(), image.getPicturePath());
+                picListerner.onPicClicked(image.getPicturePath(), image.getImageUri(), position);
             }
         });
+
+
+//        Glide.with(context).load(image.getPicturePath()).apply(new RequestOptions().centerCrop()).into(holder.picture);
+//
+//        setTransitionName(holder.picture, String.valueOf(position) + "_image");
+//
+//        holder.picture.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                picListerner.onPicClicked(holder, position, imageList);
+//            }
+//        });
 
     }
 

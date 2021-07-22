@@ -155,9 +155,9 @@ public class TiltScrollController implements SensorEventListener {
             }
         } else if (abs(deltaX) > 1 /*&& abs(deltaX) <= 1.5*/) {
             if (deltaX > 0) {
-                move = 10;
+                move = 150;
             } else {
-                move = -10;
+                move = -150;
             }
         }/* else if (abs(deltaX) > 1.4 && abs(deltaX) <= 2.0) {
             if (deltaX > 0) {

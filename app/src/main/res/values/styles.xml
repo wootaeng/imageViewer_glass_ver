@@ -8,4 +8,10 @@
     <style name="Widget.Theme.WattViewer2.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
         <item name="android:background">@color/black_overlay</item>
     </style>
+
+    <style name="mainPanel">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
 </resources>

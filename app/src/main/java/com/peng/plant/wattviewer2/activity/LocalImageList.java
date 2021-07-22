@@ -57,17 +57,29 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
 
         select_box = findViewById(R.id.select_box);
         select = findViewById(R.id.select);
+//        select.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                scrollZoomLayoutManager.getCurrentPosition();
+//
+//            }
+//        });
+
         imageRecycler = findViewById(R.id.recycler);
+
         snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(imageRecycler);
+
         mTiltScrollController = new TiltScrollController(getApplicationContext(),this);
         scrollZoomLayoutManager = new ScrollZoomLayoutManager(this, Dp2px(5));
+
 //        imageRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
 //        imageRecycler.addItemDecoration(new MarginDecoration(this));
 //        imageRecycler.hasFixedSize();
         imageRecycler.addOnScrollListener(new CenterScrollListener());
         imageRecycler.setLayoutManager(scrollZoomLayoutManager);
         load = findViewById(R.id.loader);
+
 
         if (allimages.isEmpty()){
             load.setVisibility(View.VISIBLE);
@@ -76,11 +88,17 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
             load.setVisibility(View.GONE);
             select_box.setVisibility(View.VISIBLE);
             select.setVisibility(View.VISIBLE);
+            select.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent move = new Intent(LocalImageList.this, LocalImage.class);
+                    move.putExtra("picturePath", allimages.get(scrollZoomLayoutManager.getCurrentPosition()).getPicturePath());
+                    move.putExtra("imageUri", allimages.get(scrollZoomLayoutManager.getCurrentPosition()).getImageUri());
+                    startActivity(move);
 
 
-
-
-
+                }
+            });
 
         } else {
 
@@ -135,11 +153,11 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
     @Override
     public void onTilt(int x, int y, float delta) {
         //        recyclerView.smoothScrollBy(x, y);
-        if (Math.abs(delta) > 0.6) {
+        if (Math.abs(delta) > 1) {
             imageRecycler.smoothScrollBy(x , 0);
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth()), 0);
         } else
-            imageRecycler.smoothScrollBy(x , 0);
+            imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth() / 70) , 0);
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth() / 6), 0)
 
     }
@@ -151,14 +169,19 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
     }
 
     @Override
-    public void onPicClicked(String imageUri, String picturePath) {
+    public void onPicClicked(String picturePath, String imageUri , int position) {
 
+        imageRecycler.smoothScrollToPosition(position);
         Intent move = new Intent(LocalImageList.this, LocalImage.class);
-        move.putExtra("imageUri",imageUri);
-        move.putExtra("picturePath",picturePath);
+        move.putExtra("picturePath", picturePath);
+        move.putExtra("imageuri", imageUri);
 
         startActivity(move);
+
+
     }
+
+
 
 
 }

@@ -9,7 +9,7 @@ public interface itemClickListener {
 
     void onfolderClicked(String pictureFolderPath,String folderName);
 
-    void onPicClicked(String imageUri, String picturePath);
+    void onPicClicked(String picturePath, String imageUri, int position);
 
 
 }

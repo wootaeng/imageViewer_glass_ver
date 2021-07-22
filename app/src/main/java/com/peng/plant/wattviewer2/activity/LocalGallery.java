@@ -130,9 +130,15 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
     }
 
     @Override
-    public void onPicClicked(String imageUri, String picturePath) {
+    public void onPicClicked(String picturePath, String imageUri, int position) {
 
     }
+
+
+
+
+
+
 
 
 }
