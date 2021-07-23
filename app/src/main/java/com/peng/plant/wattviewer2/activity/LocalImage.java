@@ -1,51 +1,51 @@
 package com.peng.plant.wattviewer2.activity;
 
-import android.annotation.SuppressLint;
-import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.net.Uri;
+import android.content.Context;
+import android.graphics.RectF;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.davemorrissey.labs.subscaleview.ImageSource;
-import com.davemorrissey.labs.subscaleview.ImageViewState;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-import com.google.android.material.imageview.ShapeableImageView;
+import com.github.chrisbanes.photoview.OnMatrixChangedListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.peng.plant.wattviewer2.R;
 
-import java.io.File;
-import java.util.Objects;
 
 public class LocalImage extends AppCompatActivity {
 
-    SubsamplingScaleImageView img;
 
-//    ImageView img;
 
+    ImageView img;
+//    PhotoView img;
+    Button btn1, btn2;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.local_image_view);
-//        img = findViewById(R.id.image);
-//
-//        Glide.with(this)
-//                .load(getIntent().getStringExtra("picturePath"))
-//                .into(img);
+        img = findViewById(R.id.image);
 
-        img = (SubsamplingScaleImageView) findViewById(R.id.image);
+        Glide.with(this)
+                .load(getIntent().getStringExtra("picturePath"))
+                .into(img);
+
+//        img = findViewById(R.id.photoView);
+//        Glide.with(this).load(getIntent().getStringExtra("picturePath")).diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.5f).into(img);
+
+        
+
+
 
 
 

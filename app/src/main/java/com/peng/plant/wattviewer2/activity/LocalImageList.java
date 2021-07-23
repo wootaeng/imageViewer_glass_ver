@@ -153,11 +153,11 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
     @Override
     public void onTilt(int x, int y, float delta) {
         //        recyclerView.smoothScrollBy(x, y);
-        if (Math.abs(delta) > 1) {
-            imageRecycler.smoothScrollBy(x , 0);
+        if (Math.abs(delta) > 0.6) {
+            imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth()), 0);
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth()), 0);
         } else
-            imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth() / 70) , 0);
+            imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth() / 20) , 0);
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth() / 6), 0)
 
     }

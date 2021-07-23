@@ -1,8 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView style="@style/mainPanel" android:id="@+id/imageView"/>
+    <!--
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/photoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    -->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/zoom"
+            android:layout_width="65dp"
+            android:layout_height="30dp"
+            android:background="@color/purple_500"
+
+            android:text="@string/zoom"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/zoom1"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/zoom2"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="50dp"
+
+            android:text="2" />
+
+    </FrameLayout>
+
+</RelativeLayout>

@@ -4,6 +4,7 @@
     <string name="appName">wattViewer</string>
     <string name="empty">No Images on this device</string>
     <string name="select">선택</string>
+    <string name="zoom">줌 레벨</string>
     <string name="photos_name">Photos</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
