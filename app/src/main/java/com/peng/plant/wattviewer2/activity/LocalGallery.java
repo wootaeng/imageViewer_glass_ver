@@ -9,11 +9,13 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,7 +52,8 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
         recyclerView = findViewById(R.id.lo_folder_recyclV);
 //        recyclerView.addItemDecoration(new WidthDecoration(1));
 //        recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2, GridLayoutManager.HORIZONTAL,false));
+        //(this, GridLayout.HORIZONTAL,false));
         ArrayList<LocalFolderData> folders = getPicturePaths();
 
         if (folders.isEmpty()){

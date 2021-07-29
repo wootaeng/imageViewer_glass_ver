@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import static android.hardware.SensorManager.SENSOR_DELAY_NORMAL;
 import static android.hardware.SensorManager.getOrientation;
 import static android.hardware.SensorManager.getRotationMatrixFromVector;
 import static android.hardware.SensorManager.remapCoordinateSystem;
@@ -47,7 +48,7 @@ public class TiltScrollController implements SensorEventListener {
 
         // Can be null if the sensor hardware is not available
         mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
-        mSensorManager.registerListener(this, mRotationSensor, SENSOR_DELAY_MICROS);
+        mSensorManager.registerListener(this, mRotationSensor, SENSOR_DELAY_NORMAL);
     }
 
     @Override

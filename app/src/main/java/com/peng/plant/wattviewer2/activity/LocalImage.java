@@ -1,6 +1,8 @@
 package com.peng.plant.wattviewer2.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,11 +10,23 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TabHost;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 
 import com.bumptech.glide.Glide;
@@ -27,43 +41,58 @@ import com.peng.plant.wattviewer2.data.Kalman;
 import java.io.File;
 
 
-public class LocalImage extends AppCompatActivity implements View.OnClickListener{//
+public class LocalImage extends AppCompatActivity implements View.OnClickListener {//, AccelerometerController.SensorEventListener
+    private static final String TAG = "LocalImage";
+
 
     private SensorManager sensorManager;
     private Sensor accSensor;
-    private float mX, mY;
+    private float mX, mY, mZ;
+//    private WindowManager mWindowmagager;
+//    private Display mDisplay;
+
+    private float x, y;
 
     private Kalman mKalmanAccX;
     private Kalman mKalmanAccY;
 
+//    private SubsamplingScaleImageView img;
+    private ImageView miniimg;
 
 
-
-
-    private SubsamplingScaleImageView img;
-//    ImageView img;
+    private ImageView img;
     Button btn1, btn2, btn3, btn4, btn5;
     Animation aniZoomOut, animZoomIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.local_image_view);
-        img = (SubsamplingScaleImageView) findViewById(R.id.image);
-        img.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
-        img.setMinScale(0.0F);
 
 
-        Glide.with(this)
-                .load(getIntent().getStringExtra("picturePath"))
-                .downloadOnly(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File resource, Transition<? super File> transition) {
-                        img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
-                    }
-                });
+        img = (ImageView) findViewById(R.id.image);
+//        mWindowmagager = (WindowManager) getSystemService(WINDOW_SERVICE);
+//        mDisplay = mWindowmagager.getDefaultDisplay();
 
+        //Subsampling_scale 라이브러리 사용 코드
+//        img = (SubsamplingScaleImageView) findViewById(R.id.image);
+//        img.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
+//        img.setMinScale(0.0F);
+//        Glide.with(this)
+//                .load(getIntent().getStringExtra("picturePath"))
+//                .downloadOnly(new SimpleTarget<File>() {
+//                    @Override
+//                    public void onResourceReady(File resource, Transition<? super File> transition) {
+//                        img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
+//                    }
+//                });
+        Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(img);
 
+        Log.d(TAG, "이미지 glide load" );
+
+        miniimg = (ImageView) findViewById(R.id.miniImg);
+        Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(miniimg);
 
 
         btn1 = findViewById(R.id.zoom1);
@@ -82,141 +111,152 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
         btn5.setOnClickListener((View.OnClickListener) this);
 
 
-
-
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case  R.id.zoom1:
-//                aniZoomOut = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_out);
-//                img.startAnimation(aniZoomOut);
+                aniZoomOut = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_out);
+                img.startAnimation(aniZoomOut);
 
-                sensorManager.unregisterListener(sel);
-                Glide.with(this)
-                        .load(getIntent().getStringExtra("picturePath")).fitCenter()
-                        .downloadOnly(new SimpleTarget<File>() {
-                            @Override
-                            public void onResourceReady(File resource, Transition<? super File> transition) {
-                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
-                            }
-                        });
+                stopSensor();
+                Log.d(TAG, "sensor stop");
+
 
 
                 break;
 
             case R.id.zoom2:
-//                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in);
-//                img.startAnimation(animZoomIn);
-                Glide.with(this)
-                        .load(getIntent().getStringExtra("picturePath"))
-                        .downloadOnly(new SimpleTarget<File>() {
-                            @Override
-                            public void onResourceReady(File resource, Transition<? super File> transition) {
-                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.3F, new PointF(0,0), 0));
-                            }
-                        });
+                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in);
+                img.startAnimation(animZoomIn);
 
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
-//
-                sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
+                Log.d(TAG, "kalman init!!!!!!");
+
+                startSensor();
+                Log.d(TAG, "sensor start!!!!!!!!!!!!");
+
 
                 break;
 
             case R.id.zoom3:
-                Glide.with(this)
-                        .load(getIntent().getStringExtra("picturePath"))
-                        .downloadOnly(new SimpleTarget<File>() {
-                            @Override
-                            public void onResourceReady(File resource, Transition<? super File> transition) {
-                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.4F, new PointF(0,0), 0));
-                            }
-                        });
+                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_2);
+                img.startAnimation(animZoomIn);
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
+                Log.d(TAG, "kalman init!!!!!!");
+
+                startSensor();
+                Log.d(TAG, "sensor start!!!!!!!!!!!!");
 //
-                sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
 
                 break;
             case R.id.zoom4:
-                Glide.with(this)
-                        .load(getIntent().getStringExtra("picturePath"))
-                        .downloadOnly(new SimpleTarget<File>() {
-                            @Override
-                            public void onResourceReady(File resource, Transition<? super File> transition) {
-                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.6F, new PointF(0,0), 0));
-                            }
-                        });
+                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_3);
+                img.startAnimation(animZoomIn);
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
-//
-                sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
+                Log.d(TAG, "kalman init!!!!!!");
+
+                startSensor();
+                Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
 
                 break;
             case R.id.zoom5:
-                Glide.with(this)
-                        .load(getIntent().getStringExtra("picturePath"))
-                        .downloadOnly(new SimpleTarget<File>() {
-                            @Override
-                            public void onResourceReady(File resource, Transition<? super File> transition) {
-                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.8F, new PointF(0,0), 0));
-                            }
-                        });
+                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_4);
+                img.startAnimation(animZoomIn);
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
-//
-                sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-                accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
+                Log.d(TAG, "kalman init!!!!!!");
+
+                startSensor();
+                Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
                 break;
 
         }
     }
+
+//    @Override
+//    public void onMove(int x, int y,float deltaX) {
 //
+//      img.scrollBy(x * 10, y * 10);
 //
+//    }
+
+
+
+    public void startSensor(){
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
+//        mAccelerometerController = new AccelerometerController(getApplicationContext(), this::onMove);
+        Log.d(TAG, "startSensor creat!!!!!!!!!");
+    }
+
+    public void stopSensor(){
+        sensorManager.unregisterListener(sel);
+//        mAccelerometerController.releaseAllSensors();
+        Log.d(TAG, "stopSensor !!!!!!");
+
+
+
+
+    }
+
     SensorEventListener sel = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
-            float x = event.values[0];
-            float y = event.values[1];
+            if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
+                return;
 
+//            float values[] = event.values;
+//            x = (values[0]);
+//            y = (values[1]);
 
-            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-            accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
+            x = event.values[0];
+            y = event.values[2];
 
-
-
-            float filteredX = 0.0f;
-            float filteredY = 0.0f;
+//            switch (mDisplay.getRotation()){
+//                case Surface.ROTATION_0:
+//                    x = event.values[0];
+//                    y = event.values[1];
+//                    break;
+//                case Surface.ROTATION_90:
+//                    x = -event.values[1];
+//                    y = event.values[0];
+//                    break;
+//                case Surface.ROTATION_180:
+//                    x = -event.values[0];
+//                    y = -event.values[1];
+//                    break;
+//                case Surface.ROTATION_270:
+//                    x = event.values[1];
+//                    y = -event.values[0];
+//                    break;
+//            }
 
             // 칼만필터를 적용한다
-            filteredX = (float) mKalmanAccY.update(x);
-            filteredY = (float) mKalmanAccX.update(y);
+            float filteredX = (float) mKalmanAccY.update(x);
+            float filteredY = (float) mKalmanAccX.update(y);
 
+//             이 주석을 풀면 칼만필터를 사용하지 않는다
+//             filteredX = x;
+//             filteredY = y;
+//             부모 레이아웃을 스크롤시켜 마치 뷰객체(오브젝트)가 움직이는것처럼 보이게 한다
+//             저장해둔 예전값과 현재값의 차를 넣어 변화를 감지한다
 
-            // 이 주석을 풀면 칼만필터를 사용하지 않는다
-            // filteredX = x;
-            // filteredY = y;
-            // 부모 레이아웃을 스크롤시켜 마치 뷰객체(오브젝트)가 움직이는것처럼 보이게 한다
-            // 저장해둔 예전값과 현재값의 차를 넣어 변화를 감지한다
-            // 여기에 100을 곱하는것은 차의 숫자가 워낙 작아 움직임이 보이지 않기 때문이다.
-
-            img.scrollBy((int) -((mX - filteredX) * 100), (int) ((mY - filteredY) * 100));
-
+            img.scrollBy((int) -((mX - filteredX) * 130), (int) -((mY - filteredY) * 40));
 
             // 예전값을 저장한다
             mX = filteredX;
             mY = filteredY;
+
         }
 
         @Override
