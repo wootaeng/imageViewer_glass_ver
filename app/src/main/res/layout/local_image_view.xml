@@ -20,9 +20,7 @@
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/image"
-
-       >
+        android:id="@+id/image">
 
     </com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView>
     -->
@@ -36,7 +34,16 @@
             android:id="@+id/miniImg"
             android:layout_gravity="right"
             android:layout_marginRight="30dp"
-            android:layout_marginTop="15dp"/>
+            android:layout_marginTop="15dp" />
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="130dp"
+            android:id="@+id/miniedge"
+            android:layout_gravity="right"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/edge"/>
+
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -47,7 +47,7 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
     private SensorManager sensorManager;
     private Sensor accSensor;
-    private float mX, mY, mZ;
+    private float mX, mY;
 //    private WindowManager mWindowmagager;
 //    private Display mDisplay;
 
@@ -58,6 +58,7 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
 //    private SubsamplingScaleImageView img;
     private ImageView miniimg;
+    private ImageView imgEdge;
 
 
     private ImageView img;
@@ -90,9 +91,13 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
         Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(img);
 
         Log.d(TAG, "이미지 glide load" );
+        Log.d(TAG, "imgX : " + img.getX());
+        Log.d(TAG, "imgY : " + img.getY());
 
         miniimg = (ImageView) findViewById(R.id.miniImg);
         Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(miniimg);
+
+        imgEdge = (ImageView) findViewById(R.id.miniedge);
 
 
         btn1 = findViewById(R.id.zoom1);
@@ -122,6 +127,8 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 stopSensor();
                 Log.d(TAG, "sensor stop");
 
+                Log.d(TAG, "imgX : " + img.getX());
+                Log.d(TAG, "imgY : " + img.getY());
 
 
                 break;
@@ -137,44 +144,40 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
-
                 break;
 
             case R.id.zoom3:
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_2);
                 img.startAnimation(animZoomIn);
 
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-                Log.d(TAG, "kalman init!!!!!!");
-
-                startSensor();
-                Log.d(TAG, "sensor start!!!!!!!!!!!!");
+//                mKalmanAccX = new Kalman(0.0f);
+//                mKalmanAccY = new Kalman(0.0f);
+//                Log.d(TAG, "kalman init!!!!!!");
 //
+//                startSensor();
+                Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
                 break;
             case R.id.zoom4:
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_3);
                 img.startAnimation(animZoomIn);
 
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-                Log.d(TAG, "kalman init!!!!!!");
-
-                startSensor();
+//                mKalmanAccX = new Kalman(0.0f);
+//                mKalmanAccY = new Kalman(0.0f);
+//                Log.d(TAG, "kalman init!!!!!!");
+//
+//                startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
-
 
                 break;
             case R.id.zoom5:
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_4);
                 img.startAnimation(animZoomIn);
 
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-                Log.d(TAG, "kalman init!!!!!!");
-
-                startSensor();
+//                mKalmanAccX = new Kalman(0.0f);
+//                mKalmanAccY = new Kalman(0.0f);
+//                Log.d(TAG, "kalman init!!!!!!");
+//                startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
                 break;
@@ -189,8 +192,6 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 //
 //    }
 
-
-
     public void startSensor(){
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -204,9 +205,6 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 //        mAccelerometerController.releaseAllSensors();
         Log.d(TAG, "stopSensor !!!!!!");
 
-
-
-
     }
 
     SensorEventListener sel = new SensorEventListener() {
@@ -215,31 +213,9 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
             if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
                 return;
 
-//            float values[] = event.values;
-//            x = (values[0]);
-//            y = (values[1]);
 
             x = event.values[0];
             y = event.values[2];
-
-//            switch (mDisplay.getRotation()){
-//                case Surface.ROTATION_0:
-//                    x = event.values[0];
-//                    y = event.values[1];
-//                    break;
-//                case Surface.ROTATION_90:
-//                    x = -event.values[1];
-//                    y = event.values[0];
-//                    break;
-//                case Surface.ROTATION_180:
-//                    x = -event.values[0];
-//                    y = -event.values[1];
-//                    break;
-//                case Surface.ROTATION_270:
-//                    x = event.values[1];
-//                    y = -event.values[0];
-//                    break;
-//            }
 
             // 칼만필터를 적용한다
             float filteredX = (float) mKalmanAccY.update(x);
@@ -251,7 +227,7 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 //             부모 레이아웃을 스크롤시켜 마치 뷰객체(오브젝트)가 움직이는것처럼 보이게 한다
 //             저장해둔 예전값과 현재값의 차를 넣어 변화를 감지한다
 
-            img.scrollBy((int) -((mX - filteredX) * 130), (int) -((mY - filteredY) * 40));
+            img.scrollBy((int) -((mX - filteredX) * 100), (int) -((mY - filteredY) * 30));
 
             // 예전값을 저장한다
             mX = filteredX;
