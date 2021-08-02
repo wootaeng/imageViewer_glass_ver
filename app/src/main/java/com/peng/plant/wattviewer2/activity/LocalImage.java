@@ -3,6 +3,9 @@ package com.peng.plant.wattviewer2.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -62,7 +65,7 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
 
     private ImageView img;
-    Button btn1, btn2, btn3, btn4, btn5;
+    Button btn1, btn2, btn3, btn4, btn5, fixbtn, fixoffbtn;
     Animation aniZoomOut, animZoomIn;
 
     @Override
@@ -88,11 +91,9 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 //                        img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
 //                    }
 //                });
-        Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(img);
-
+        Glide.with(this).load(getIntent().getStringExtra("picturePath")).fitCenter().into(img);
         Log.d(TAG, "이미지 glide load" );
-        Log.d(TAG, "imgX : " + img.getX());
-        Log.d(TAG, "imgY : " + img.getY());
+
 
         miniimg = (ImageView) findViewById(R.id.miniImg);
         Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(miniimg);
@@ -115,20 +116,24 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
         btn5 = findViewById(R.id.zoom5);
         btn5.setOnClickListener((View.OnClickListener) this);
 
+        fixbtn = findViewById(R.id.viewFix);
+        fixoffbtn = findViewById(R.id.viewFixoff);
+
 
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case  R.id.zoom1:
-                aniZoomOut = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_out);
-                img.startAnimation(aniZoomOut);
-
                 stopSensor();
                 Log.d(TAG, "sensor stop");
 
-                Log.d(TAG, "imgX : " + img.getX());
-                Log.d(TAG, "imgY : " + img.getY());
+                aniZoomOut = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_out);
+                img.startAnimation(aniZoomOut);
+                fixbtn.setVisibility(View.GONE);
+                fixoffbtn.setVisibility(View.GONE);
+
+                img.scrollTo(0,0);
 
 
                 break;
@@ -137,12 +142,32 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in);
                 img.startAnimation(animZoomIn);
 
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
-                Log.d(TAG, "kalman init!!!!!!");
+                Log.d(TAG, "kalman reset");
 
                 startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
+                fixbtn.setVisibility(View.VISIBLE);
+                fixbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fixbtn.setVisibility(View.GONE);
+                        fixoffbtn.setVisibility(View.VISIBLE);
+                        stopSensor();
+                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fixoffbtn.setVisibility(View.GONE);
+                                fixbtn.setVisibility(View.VISIBLE);
+                                startSensor();
+                            }
+                        });
+
+                    }
+                });
+
 
                 break;
 
@@ -150,23 +175,22 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_2);
                 img.startAnimation(animZoomIn);
 
-//                mKalmanAccX = new Kalman(0.0f);
-//                mKalmanAccY = new Kalman(0.0f);
-//                Log.d(TAG, "kalman init!!!!!!");
-//
-//                startSensor();
+                mKalmanAccX = new Kalman(0.0f);
+                mKalmanAccY = new Kalman(0.0f);
+
+                startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
+
+
 
                 break;
             case R.id.zoom4:
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_3);
                 img.startAnimation(animZoomIn);
 
-//                mKalmanAccX = new Kalman(0.0f);
-//                mKalmanAccY = new Kalman(0.0f);
-//                Log.d(TAG, "kalman init!!!!!!");
-//
-//                startSensor();
+                mKalmanAccX = new Kalman(0.0f);
+                mKalmanAccY = new Kalman(0.0f);
+                startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
                 break;
@@ -174,16 +198,17 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_4);
                 img.startAnimation(animZoomIn);
 
-//                mKalmanAccX = new Kalman(0.0f);
-//                mKalmanAccY = new Kalman(0.0f);
-//                Log.d(TAG, "kalman init!!!!!!");
-//                startSensor();
+                mKalmanAccX = new Kalman(0.0f);
+                mKalmanAccY = new Kalman(0.0f);
+                startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
                 break;
 
         }
     }
+
+
 
 //    @Override
 //    public void onMove(int x, int y,float deltaX) {
@@ -207,12 +232,16 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     SensorEventListener sel = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
                 return;
-
 
             x = event.values[0];
             y = event.values[2];
@@ -227,7 +256,9 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 //             부모 레이아웃을 스크롤시켜 마치 뷰객체(오브젝트)가 움직이는것처럼 보이게 한다
 //             저장해둔 예전값과 현재값의 차를 넣어 변화를 감지한다
 
-            img.scrollBy((int) -((mX - filteredX) * 100), (int) -((mY - filteredY) * 30));
+            img.scrollBy((int) -((mX - filteredX) * 150), (int) -((mY - filteredY) * 30));
+            imgEdge.setTranslationX((int) -((mX - filteredX) * 15));
+            imgEdge.setTranslationY((int) -((mY - filteredY) * 3));
 
             // 예전값을 저장한다
             mX = filteredX;

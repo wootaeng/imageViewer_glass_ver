@@ -9,12 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     -->
+
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
         />
+
 
     <!--
     <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
@@ -29,15 +31,16 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="130dp"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
             android:id="@+id/miniImg"
+            android:scaleType="fitCenter"
             android:layout_gravity="right"
             android:layout_marginRight="30dp"
             android:layout_marginTop="15dp" />
         <ImageView
-            android:layout_width="150dp"
-            android:layout_height="130dp"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
             android:id="@+id/miniedge"
             android:layout_gravity="right"
             android:layout_marginRight="30dp"
@@ -119,7 +122,33 @@
                 android:textSize="10sp"
                 android:textStyle="bold"/>
 
+
+
+
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/viewFix"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="13px"
+            android:layout_gravity="center|bottom"
+            android:gravity="center"
+            android:text="화면 고정"
+            android:textSize="20px"
+            android:visibility="gone"
+            android:textStyle="bold"/>
+        <Button
+            android:id="@+id/viewFixoff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="13px"
+            android:layout_gravity="center|bottom"
+            android:gravity="center"
+            android:text="화면 고정해제"
+            android:textSize="20px"
+            android:visibility="gone"
+            android:textStyle="bold"/>
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
