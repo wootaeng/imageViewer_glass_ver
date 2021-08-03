@@ -3,10 +3,15 @@ package com.peng.plant.wattviewer2.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,10 +25,12 @@ import android.view.Gravity;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
@@ -33,6 +40,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
@@ -44,25 +52,27 @@ import com.peng.plant.wattviewer2.data.Kalman;
 import java.io.File;
 
 
-public class LocalImage extends AppCompatActivity implements View.OnClickListener {//, AccelerometerController.SensorEventListener
+public class LocalImage extends AppCompatActivity implements View.OnClickListener{//, AccelerometerController.SensorEventListener
     private static final String TAG = "LocalImage";
 
 
     private SensorManager sensorManager;
     private Sensor accSensor;
     private float mX, mY;
-//    private WindowManager mWindowmagager;
-//    private Display mDisplay;
+    private WindowManager mWindowmagager;
+    private Display mDisplay;
+    private Point size;
 
     private float x, y;
 
     private Kalman mKalmanAccX;
     private Kalman mKalmanAccY;
 
-//    private SubsamplingScaleImageView img;
+    //    private SubsamplingScaleImageView img;
     private ImageView miniimg;
     private ImageView imgEdge;
 
+    private FrameLayout.LayoutParams layoutParams;
 
     private ImageView img;
     Button btn1, btn2, btn3, btn4, btn5, fixbtn, fixoffbtn;
@@ -74,10 +84,7 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
         setContentView(R.layout.local_image_view);
 
-
         img = (ImageView) findViewById(R.id.image);
-//        mWindowmagager = (WindowManager) getSystemService(WINDOW_SERVICE);
-//        mDisplay = mWindowmagager.getDefaultDisplay();
 
         //Subsampling_scale 라이브러리 사용 코드
 //        img = (SubsamplingScaleImageView) findViewById(R.id.image);
@@ -94,12 +101,10 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
         Glide.with(this).load(getIntent().getStringExtra("picturePath")).fitCenter().into(img);
         Log.d(TAG, "이미지 glide load" );
 
-
         miniimg = (ImageView) findViewById(R.id.miniImg);
         Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(miniimg);
 
         imgEdge = (ImageView) findViewById(R.id.miniedge);
-
 
         btn1 = findViewById(R.id.zoom1);
         btn1.setOnClickListener((View.OnClickListener) this);
@@ -119,7 +124,6 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
         fixbtn = findViewById(R.id.viewFix);
         fixoffbtn = findViewById(R.id.viewFixoff);
 
-
     }
     @Override
     public void onClick(View v) {
@@ -130,11 +134,23 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
                 aniZoomOut = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_out);
                 img.startAnimation(aniZoomOut);
+//                Glide.with(this)
+//                        .load(getIntent().getStringExtra("picturePath"))
+//                        .downloadOnly(new SimpleTarget<File>() {
+//                            @Override
+//                            public void onResourceReady(File resource, Transition<? super File> transition) {
+//                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
+//                            }
+//                        });
                 fixbtn.setVisibility(View.GONE);
                 fixoffbtn.setVisibility(View.GONE);
 
+                //위치 초기화화
                 img.scrollTo(0,0);
-
+                layoutParams = new FrameLayout.LayoutParams(120,80);
+                layoutParams.gravity = Gravity.RIGHT;
+                layoutParams.setMargins(0, 80, 40, 0);
+                imgEdge.setLayoutParams(layoutParams);
 
                 break;
 
@@ -142,6 +158,10 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in);
                 img.startAnimation(animZoomIn);
 
+                layoutParams = new FrameLayout.LayoutParams(100,60);
+                layoutParams.gravity = Gravity.RIGHT;
+                layoutParams.setMargins(0, 80, 40, 0);
+                imgEdge.setLayoutParams(layoutParams);
 
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
@@ -149,6 +169,7 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
                 startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
+
                 fixbtn.setVisibility(View.VISIBLE);
                 fixbtn.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -164,10 +185,8 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                                 startSensor();
                             }
                         });
-
                     }
                 });
-
 
                 break;
 
@@ -175,40 +194,105 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_2);
                 img.startAnimation(animZoomIn);
 
+                layoutParams = new FrameLayout.LayoutParams(80,50);
+                layoutParams.gravity = Gravity.RIGHT;
+                layoutParams.setMargins(0, 80, 40, 0);
+                imgEdge.setLayoutParams(layoutParams);
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
 
                 startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
-
+                fixbtn.setVisibility(View.VISIBLE);
+                fixbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fixbtn.setVisibility(View.GONE);
+                        fixoffbtn.setVisibility(View.VISIBLE);
+                        stopSensor();
+                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fixoffbtn.setVisibility(View.GONE);
+                                fixbtn.setVisibility(View.VISIBLE);
+                                startSensor();
+                            }
+                        });
+                    }
+                });
 
                 break;
             case R.id.zoom4:
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_3);
                 img.startAnimation(animZoomIn);
 
+                layoutParams = new FrameLayout.LayoutParams(60,35);
+                layoutParams.gravity = Gravity.RIGHT;
+                layoutParams.setMargins(0, 80, 40, 0);
+                imgEdge.setLayoutParams(layoutParams);
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
                 startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
+
+                fixbtn.setVisibility(View.VISIBLE);
+                fixbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fixbtn.setVisibility(View.GONE);
+                        fixoffbtn.setVisibility(View.VISIBLE);
+                        stopSensor();
+                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fixoffbtn.setVisibility(View.GONE);
+                                fixbtn.setVisibility(View.VISIBLE);
+                                startSensor();
+                            }
+                        });
+                    }
+                });
 
                 break;
             case R.id.zoom5:
                 animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_4);
                 img.startAnimation(animZoomIn);
 
+                layoutParams = new FrameLayout.LayoutParams(40,20);
+                layoutParams.gravity = Gravity.RIGHT;
+                layoutParams.setMargins(0, 80, 40, 0);
+                imgEdge.setLayoutParams(layoutParams);
+
                 mKalmanAccX = new Kalman(0.0f);
                 mKalmanAccY = new Kalman(0.0f);
                 startSensor();
                 Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
+                fixbtn.setVisibility(View.VISIBLE);
+                fixbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        fixbtn.setVisibility(View.GONE);
+                        fixoffbtn.setVisibility(View.VISIBLE);
+                        stopSensor();
+                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                fixoffbtn.setVisibility(View.GONE);
+                                fixbtn.setVisibility(View.VISIBLE);
+                                startSensor();
+                            }
+                        });
+                    }
+                });
+
                 break;
 
         }
     }
-
-
 
 //    @Override
 //    public void onMove(int x, int y,float deltaX) {
@@ -257,8 +341,11 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 //             저장해둔 예전값과 현재값의 차를 넣어 변화를 감지한다
 
             img.scrollBy((int) -((mX - filteredX) * 150), (int) -((mY - filteredY) * 30));
-            imgEdge.setTranslationX((int) -((mX - filteredX) * 15));
-            imgEdge.setTranslationY((int) -((mY - filteredY) * 3));
+//            img.setTranslationX((int) -((mX - filteredX) * 200));
+//            img.setTranslationY((int) -((mY - filteredY) * 100));
+
+            imgEdge.setTranslationX((int) ((mX - filteredX) * 100));
+            imgEdge.setTranslationY((int) -((mY - filteredY) * 50));
 
             // 예전값을 저장한다
             mX = filteredX;
@@ -272,6 +359,12 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
         }
     };
 
-
-
 }
+
+
+
+
+
+
+
+

@@ -16,7 +16,7 @@ import static java.lang.Math.abs;
 
 public class TiltScrollController implements SensorEventListener {
     private static final float THRESHOLD_MOTION = 0.001f;
-    private static final int SENSOR_DELAY_MICROS = 80 * 1000; // 32ms
+    private static final int SENSOR_DELAY_MICROS = 800 * 1000; // 32ms
 
     private final ScrollListener mListener;
 

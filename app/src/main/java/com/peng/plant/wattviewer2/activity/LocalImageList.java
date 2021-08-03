@@ -157,7 +157,7 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
             imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth()), 0);
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth()), 0);
         } else
-            imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth() / 20) , 0);
+            imageRecycler.smoothScrollBy(x *(scrollZoomLayoutManager.getEachItemWidth() / 6) , 0);
 //            smoothScrollBy(x * (layoutManager.getEachItemWidth() / 6), 0)
 
     }

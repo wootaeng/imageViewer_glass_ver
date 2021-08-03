@@ -52,7 +52,7 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
         recyclerView = findViewById(R.id.lo_folder_recyclV);
         recyclerView.addItemDecoration(new WidthDecoration(1));
         recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 1,GridLayoutManager.HORIZONTAL,false));
         //(this, GridLayout.HORIZONTAL,false));
         ArrayList<LocalFolderData> folders = getPicturePaths();
 
