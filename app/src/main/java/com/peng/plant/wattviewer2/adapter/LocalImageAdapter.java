@@ -92,4 +92,6 @@ public class LocalImageAdapter extends RecyclerView.Adapter<LocalImageAdapter.Vi
             select = itemView.findViewById(R.id.select);
         }
     }
+
+
 }

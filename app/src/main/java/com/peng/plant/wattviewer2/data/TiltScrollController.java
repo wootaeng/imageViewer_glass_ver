@@ -16,7 +16,7 @@ import static java.lang.Math.abs;
 
 public class TiltScrollController implements SensorEventListener {
     private static final float THRESHOLD_MOTION = 0.001f;
-    private static final int SENSOR_DELAY_MICROS = 800 * 1000; // 32ms
+    private static final int SENSOR_DELAY_MICROS = 80 * 1000; // 32ms
 
     private final ScrollListener mListener;
 
@@ -156,11 +156,11 @@ public class TiltScrollController implements SensorEventListener {
             }
         } else if (abs(deltaX) > 1 /*&& abs(deltaX) <= 1.5*/) {
             if (deltaX > 0) {
-                move = 150;
+                move = 10;
             } else {
-                move = -150;
+                move = -10;
             }
-        }/* else if (abs(deltaX) > 1.4 && abs(deltaX) <= 2.0) {
+        } else if (abs(deltaX) > 1.4 && abs(deltaX) <= 2.0) {
             if (deltaX > 0) {
                 move = 12;
             } else {
@@ -174,11 +174,11 @@ public class TiltScrollController implements SensorEventListener {
             }
         } else if (abs(deltaX) > 3 && abs(deltaX) <= 3) {
             if (deltaX > 0) {
-                move = 20;
+                move = 50;
             } else {
-                move = -20;
+                move = -50;
             }
-        }*/ /*else if (abs(deltaX) > 3.5 && abs(deltaX) <= 4) {
+        } /*else if (abs(deltaX) > 3.5 && abs(deltaX) <= 4) {
             if (deltaX > 0) {
                 move = 16;
             } else {
