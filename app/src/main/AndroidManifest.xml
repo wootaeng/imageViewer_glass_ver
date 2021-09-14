@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WattViewer2">
         <activity
-            android:name=".activity.LocalImage"
+            android:name=".view.LocalImage"
             android:label="@string/title_activity_local_image"
             android:theme="@style/Theme.WattViewer2.NoActionBar"
             android:screenOrientation="landscape"/>
@@ -31,13 +31,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ServerGallery"
+            android:name=".view.LocalImageList"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".activity.LocalImageList"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".activity.LocalGallery"
+            android:name=".view.LocalGallery"
             android:screenOrientation="landscape" />
     </application>
 

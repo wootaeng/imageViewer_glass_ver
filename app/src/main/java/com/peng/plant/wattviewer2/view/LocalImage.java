@@ -1,4 +1,4 @@
-package com.peng.plant.wattviewer2.activity;
+package com.peng.plant.wattviewer2.view;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -23,7 +23,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.peng.plant.wattviewer2.R;
-import com.peng.plant.wattviewer2.data.Kalman;
 
 
 public class LocalImage extends AppCompatActivity implements View.OnClickListener{//, AccelerometerController.SensorEventListener

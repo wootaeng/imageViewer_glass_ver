@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="1dp"
+    android:layout_marginEnd="1dp"
+    android:layout_marginRight=".5dp"
+    android:layout_marginStart="1dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/folderCard"
-        android:layout_width="120dp"
-        android:layout_height="130dp"
+        android:layout_width="210dp"
+        android:layout_height="220dp"
         android:layout_marginTop="1dp"
         app:cardCornerRadius="1dp">
 
@@ -22,13 +26,13 @@
                 android:id="@+id/folderPic"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="8"
+                android:layout_weight="10"
                 android:src="@mipmap/ic_launcher"/>
             <TextView
                 android:id="@+id/folderName"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="1"
@@ -39,7 +43,7 @@
                 android:id="@+id/folderSize"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="1"

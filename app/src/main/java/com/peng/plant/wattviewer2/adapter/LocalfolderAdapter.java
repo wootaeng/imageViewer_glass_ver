@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.peng.plant.wattviewer2.R;
 import com.peng.plant.wattviewer2.data.LocalFolderData;
-import com.peng.plant.wattviewer2.itemClickListener;
+import com.peng.plant.wattviewer2.listener.itemClickListener;
 
 import java.util.ArrayList;
 
@@ -25,6 +25,7 @@ public class LocalfolderAdapter extends RecyclerView.Adapter<LocalfolderAdapter.
     private ArrayList<LocalFolderData> folders;
     private Context folderContx;
     private itemClickListener listenToClick;
+    private int position_check;
 
     public LocalfolderAdapter(ArrayList<LocalFolderData> folders, Context folderContx, itemClickListener listen){
         this.folders = folders;
@@ -82,5 +83,9 @@ public class LocalfolderAdapter extends RecyclerView.Adapter<LocalfolderAdapter.
             folderSize=itemView.findViewById(R.id.folderSize);
             folderCard = itemView.findViewById(R.id.folderCard);
         }
+    }
+
+    public void choice_position(int position) {
+        position_check = position;
     }
 }

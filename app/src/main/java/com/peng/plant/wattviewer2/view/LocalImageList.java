@@ -1,4 +1,4 @@
-package com.peng.plant.wattviewer2.activity;
+package com.peng.plant.wattviewer2.view;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.peng.plant.wattviewer2.R;
 import com.peng.plant.wattviewer2.adapter.LocalImageAdapter;
-import com.peng.plant.wattviewer2.data.CenterScrollListener;
+import com.peng.plant.wattviewer2.listener.CenterScrollListener;
 import com.peng.plant.wattviewer2.data.LocalimageData;
-import com.peng.plant.wattviewer2.data.ScrollZoomLayoutManager;
-import com.peng.plant.wattviewer2.data.TiltScrollController;
-import com.peng.plant.wattviewer2.itemClickListener;
+import com.peng.plant.wattviewer2.util.ScrollZoomLayoutManager;
+import com.peng.plant.wattviewer2.controller.TiltScrollController;
+import com.peng.plant.wattviewer2.listener.itemClickListener;
 
 import java.util.ArrayList;
 

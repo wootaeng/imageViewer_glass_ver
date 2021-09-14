@@ -1,6 +1,9 @@
-package com.peng.plant.wattviewer2.data;
+package com.peng.plant.wattviewer2.listener;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.peng.plant.wattviewer2.util.CircleLayoutManager;
+import com.peng.plant.wattviewer2.util.ScrollZoomLayoutManager;
 
 public class CenterScrollListener extends RecyclerView.OnScrollListener{
     private boolean mAutoSet = false;

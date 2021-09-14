@@ -7,8 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.peng.plant.wattviewer2.activity.LocalGallery;
-import com.peng.plant.wattviewer2.activity.ServerGallery;
+import com.peng.plant.wattviewer2.view.LocalGallery;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,14 +29,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //servergallery 이동
-        moveToserver = (Button)findViewById(R.id.serverBtn);
-        moveToserver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, ServerGallery.class);
-                startActivity(i);
-            }
-        });
+
     }
 }

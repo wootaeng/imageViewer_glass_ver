@@ -1,40 +1,47 @@
-package com.peng.plant.wattviewer2.activity;
+package com.peng.plant.wattviewer2.view;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.GridLayout;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SnapHelper;
 
-import com.peng.plant.wattviewer2.WidthDecoration;
+import com.peng.plant.wattviewer2.util.ScrollZoomLayoutManager;
+import com.peng.plant.wattviewer2.controller.TiltScrollController;
 import com.peng.plant.wattviewer2.R;
-import com.peng.plant.wattviewer2.adapter.LocalImageAdapter;
 import com.peng.plant.wattviewer2.adapter.LocalfolderAdapter;
 import com.peng.plant.wattviewer2.data.LocalFolderData;
-import com.peng.plant.wattviewer2.data.LocalimageData;
-import com.peng.plant.wattviewer2.itemClickListener;
+import com.peng.plant.wattviewer2.listener.itemClickListener;
 
 import java.util.ArrayList;
 
 
-public class LocalGallery extends AppCompatActivity implements itemClickListener {
+public class LocalGallery extends AppCompatActivity implements itemClickListener, TiltScrollController.ScrollListener {
 
     RecyclerView recyclerView;
     TextView empty;
+    private RecyclerView.Adapter folderAdapter;
     LocalfolderAdapter folderadapter;
+    TiltScrollController mScrollController;
+    ScrollZoomLayoutManager scrollZoomLayoutManager;
+    private SnapHelper snapHelper;
+    private int sensor_statistic;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
     @Override
@@ -49,21 +56,40 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
 
         empty = findViewById(R.id.empty);
 
-        recyclerView = findViewById(R.id.lo_folder_recyclV);
-        recyclerView.addItemDecoration(new WidthDecoration(1));
+//        mScrollController = new TiltScrollController(getApplicationContext(), this);
+
+        recyclerView = findViewById(R.id.folderRecycler);
+//        recyclerView.addItemDecoration(new MarginDecoration(this));
+        scrollZoomLayoutManager = new ScrollZoomLayoutManager(this, Dp2px(10));
+        recyclerView.setLayoutManager(scrollZoomLayoutManager);
         recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 1,GridLayoutManager.HORIZONTAL,false));
-        //(this, GridLayout.HORIZONTAL,false));
+        snapHelper = new LinearSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
         ArrayList<LocalFolderData> folders = getPicturePaths();
 
         if (folders.isEmpty()){
             empty.setVisibility(View.VISIBLE);
         }else {
             folderadapter = new LocalfolderAdapter(folders, LocalGallery.this, this);
+            folderAdapter = folderadapter;
             recyclerView.setAdapter(folderadapter);
         }
 
+        changeStatusBarColor();
+
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        mScrollController.requestAllSensors();
+//        recyclerView.smoothScrollBy(sensor_statistic, 0);
+//    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mScrollController.releaseAllSensors();
+//    }
 
     private ArrayList<LocalFolderData> getPicturePaths() {
         ArrayList<LocalFolderData> picFolders = new ArrayList<>();
@@ -138,10 +164,28 @@ public class LocalGallery extends AppCompatActivity implements itemClickListener
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void changeStatusBarColor()
+    {
+        Window window = this.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(getApplicationContext(),R.color.black));
 
+    }
 
+    public int Dp2px(float dp) {
+        final float scale = getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
+    }
 
+    @Override
+    public void onTilt(int x, int y, float delta) {
+        recyclerView.smoothScrollBy((int) (x * (scrollZoomLayoutManager.getEachItemWidth())/2),0);
+        folderadapter.choice_position(scrollZoomLayoutManager.getCurrentPosition());
 
+        sensor_statistic = (int) (x * (scrollZoomLayoutManager.getEachItemWidth())/2);
+    }
 
 
 }

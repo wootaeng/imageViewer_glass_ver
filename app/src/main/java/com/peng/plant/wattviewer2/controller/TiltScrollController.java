@@ -1,4 +1,4 @@
-package com.peng.plant.wattviewer2.data;
+package com.peng.plant.wattviewer2.controller;
 
 import android.content.Context;
 import android.hardware.Sensor;
