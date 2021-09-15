@@ -1,6 +1,7 @@
 package com.peng.plant.wattviewer2.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,48 +11,41 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 
 import com.bumptech.glide.Glide;
+import com.peng.plant.wattviewer2.MainActivity;
 import com.peng.plant.wattviewer2.R;
+import com.peng.plant.wattviewer2.controller.TiltScrollController;
+import com.peng.plant.wattviewer2.controller.ZoomController;
 
 
-public class LocalImage extends AppCompatActivity implements View.OnClickListener{//, AccelerometerController.SensorEventListener
+public class LocalImage extends AppCompatActivity implements TiltScrollController.ScrollListener {
     private static final String TAG = "LocalImage";
 
 
-    private SensorManager sensorManager;
-    private Sensor accSensor;
-    private float mX, mY;
-    private WindowManager mWindowmagager;
-    private Display mDisplay;
-    private Point size;
-
-    private float x, y;
-
-    private Kalman mKalmanAccX;
-    private Kalman mKalmanAccY;
-
-    //    private SubsamplingScaleImageView img;
-    private ImageView miniimg;
-    private ImageView imgEdge;
-
-    private FrameLayout.LayoutParams layoutParams;
-    private boolean clickfix;
-
-
-    private ImageView img;
-    Button btn1, btn2, btn3, btn4, btn5, fixbtn, fixoffbtn;
-    Animation aniZoomOut, animZoomIn;
+    private ImageView img, miniView;
+    private TiltScrollController mTiltScrollController;
+    private boolean sensor_control = true;
+    private Button Zoom1, Zoom2, Zoom3, Zoom4, Zoom5, Stopimg;
+    private TextView ZoomV1, ZoomV2, ZoomV3, ZoomV4, ZoomV5, imageM, imageP;
+    private ZoomController mZoomcontrol;
+    private RelativeLayout mRelativeLayout;
+    private View v;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,309 +54,153 @@ public class LocalImage extends AppCompatActivity implements View.OnClickListene
 
         img = (ImageView) findViewById(R.id.image);
 
-//        Subsampling_scale 라이브러리 사용 코드
-//        img = (SubsamplingScaleImageView) findViewById(R.id.image);
-//        img.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
-//        img.setMinScale(0.0F);
-//        Glide.with(this)
-//                .load(getIntent().getStringExtra("picturePath"))
-//                .downloadOnly(new SimpleTarget<File>() {
-//                    @Override
-//                    public void onResourceReady(File resource, Transition<? super File> transition) {
-//                        img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
-//                    }
-//                });
-        Glide.with(this).load(getIntent().getStringExtra("picturePath")).fitCenter().into(img);
-        Log.d(TAG, "이미지 glide load" );
+        init();
 
-        miniimg = (ImageView) findViewById(R.id.miniImg);
-        Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(miniimg);
-
-        imgEdge = (ImageView) findViewById(R.id.miniedge);
-
-        btn1 = findViewById(R.id.zoom1);
-        btn1.setOnClickListener((View.OnClickListener) this);
-
-        btn2 = findViewById(R.id.zoom2);
-        btn2.setOnClickListener((View.OnClickListener) this);
-
-        btn3 = findViewById(R.id.zoom3);
-        btn3.setOnClickListener((View.OnClickListener) this);
-
-        btn4 = findViewById(R.id.zoom4);
-        btn4.setOnClickListener((View.OnClickListener) this);
-
-        btn5 = findViewById(R.id.zoom5);
-        btn5.setOnClickListener((View.OnClickListener) this);
-
-        fixbtn = findViewById(R.id.viewFix);
-        fixoffbtn = findViewById(R.id.viewFixoff);
-
+        //미니맵 그리기
+        miniMapDraw();
 
 
     }
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case  R.id.zoom1:
-                stopSensor();
-                Log.d(TAG, "sensor stop");
-
-                aniZoomOut = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_out);
-                img.startAnimation(aniZoomOut);
-//                Glide.with(this)
-//                        .load(getIntent().getStringExtra("picturePath"))
-//                        .downloadOnly(new SimpleTarget<File>() {
-//                            @Override
-//                            public void onResourceReady(File resource, Transition<? super File> transition) {
-//                                img.setImage(ImageSource.uri(Uri.fromFile(resource)), new ImageViewState(0.0F, new PointF(0,0), 0));
-//                            }
-//                        });
-                fixbtn.setVisibility(View.GONE);
-                fixoffbtn.setVisibility(View.GONE);
-
-                //위치 초기화화
-                img.scrollTo(0,0);
-                layoutParams = new FrameLayout.LayoutParams(120,80);
-                layoutParams.gravity = Gravity.RIGHT;
-                layoutParams.setMargins(0, 80, 40, 0);
-                imgEdge.setLayoutParams(layoutParams);
-
-                break;
-
-            case R.id.zoom2:
-                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in);
-                img.startAnimation(animZoomIn);
-
-                layoutParams = new FrameLayout.LayoutParams(100,60);
-                layoutParams.gravity = Gravity.RIGHT;
-                layoutParams.setMargins(0, 80, 40, 0);
-                imgEdge.setLayoutParams(layoutParams);
-
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-                Log.d(TAG, "kalman reset");
-
-                if (clickfix){
-                    stopSensor();
-                }else {
-                    startSensor();
-                }
 
 
-                Log.d(TAG, "sensor start!!!!!!!!!!!!");
 
-                fixbtn.setVisibility(View.VISIBLE);
-                fixbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clickfix = true;
-                        fixbtn.setVisibility(View.GONE);
-                        fixoffbtn.setVisibility(View.VISIBLE);
-                        stopSensor();
-                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clickfix = false;
-                                fixoffbtn.setVisibility(View.GONE);
-                                fixbtn.setVisibility(View.VISIBLE);
-                                startSensor();
-                            }
-                        });
-                    }
-                });
 
-                break;
-
-            case R.id.zoom3:
-                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_2);
-                img.startAnimation(animZoomIn);
-
-                layoutParams = new FrameLayout.LayoutParams(80,50);
-                layoutParams.gravity = Gravity.RIGHT;
-                layoutParams.setMargins(0, 80, 40, 0);
-                imgEdge.setLayoutParams(layoutParams);
-
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-
-                if (clickfix){
-                    stopSensor();
-                }else {
-                    startSensor();
-                }
-                Log.d(TAG, "sensor start!!!!!!!!!!!!");
-
-                fixbtn.setVisibility(View.VISIBLE);
-                fixbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clickfix = true;
-                        fixbtn.setVisibility(View.GONE);
-                        fixoffbtn.setVisibility(View.VISIBLE);
-                        stopSensor();
-                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clickfix = false;
-                                fixoffbtn.setVisibility(View.GONE);
-                                fixbtn.setVisibility(View.VISIBLE);
-                                startSensor();
-                            }
-                        });
-                    }
-                });
-
-                break;
-            case R.id.zoom4:
-                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_3);
-                img.startAnimation(animZoomIn);
-
-                layoutParams = new FrameLayout.LayoutParams(60,35);
-                layoutParams.gravity = Gravity.RIGHT;
-                layoutParams.setMargins(0, 80, 40, 0);
-                imgEdge.setLayoutParams(layoutParams);
-
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-                if (clickfix){
-                    stopSensor();
-                }else {
-                    startSensor();
-                }
-                Log.d(TAG, "sensor start!!!!!!!!!!!!");
-
-                fixbtn.setVisibility(View.VISIBLE);
-                fixbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clickfix = true;
-                        fixbtn.setVisibility(View.GONE);
-                        fixoffbtn.setVisibility(View.VISIBLE);
-                        stopSensor();
-                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clickfix = false;
-                                fixoffbtn.setVisibility(View.GONE);
-                                fixbtn.setVisibility(View.VISIBLE);
-                                startSensor();
-                            }
-                        });
-                    }
-                });
-
-                break;
-            case R.id.zoom5:
-                animZoomIn = AnimationUtils.loadAnimation(LocalImage.this, R.anim.zoom_in_4);
-                img.startAnimation(animZoomIn);
-
-                layoutParams = new FrameLayout.LayoutParams(40,20);
-                layoutParams.gravity = Gravity.RIGHT;
-                layoutParams.setMargins(0, 80, 40, 0);
-                imgEdge.setLayoutParams(layoutParams);
-
-                mKalmanAccX = new Kalman(0.0f);
-                mKalmanAccY = new Kalman(0.0f);
-                if (clickfix){
-                    stopSensor();
-                }else {
-                    startSensor();
-                }
-                Log.d(TAG, "sensor start!!!!!!!!!!!!");
-
-                fixbtn.setVisibility(View.VISIBLE);
-                fixbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clickfix = true;
-                        fixbtn.setVisibility(View.GONE);
-                        fixoffbtn.setVisibility(View.VISIBLE);
-                        stopSensor();
-                        fixoffbtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                clickfix = false;
-                                fixoffbtn.setVisibility(View.GONE);
-                                fixbtn.setVisibility(View.VISIBLE);
-                                startSensor();
-                            }
-                        });
-                    }
-                });
-
-                break;
-
-        }
-    }
-
-//    @Override
-//    public void onMove(int x, int y,float deltaX) {
-//
-//      img.scrollBy(x * 10, y * 10);
-//
-//    }
-
-    public void startSensor(){
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(sel, accSensor, SensorManager.SENSOR_DELAY_GAME);
-//        mAccelerometerController = new AccelerometerController(getApplicationContext(), this::onMove);
-        Log.d(TAG, "startSensor creat!!!!!!!!!");
-    }
-
-    public void stopSensor(){
-        sensorManager.unregisterListener(sel);
-//        mAccelerometerController.releaseAllSensors();
-        Log.d(TAG, "stopSensor !!!!!!");
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    SensorEventListener sel = new SensorEventListener() {
+    //줌 버튼 리스너
+    private View.OnClickListener ZoomLevel_moveControll = new View.OnClickListener() {
         @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER)
-                return;
-
-            x = event.values[0];
-            y = event.values[2];
-
-            // 칼만필터를 적용한다
-            float filteredX = (float) mKalmanAccY.update(x);
-            float filteredY = (float) mKalmanAccX.update(y);
-
-//             이 주석을 풀면 칼만필터를 사용하지 않는다
-//             filteredX = x;
-//             filteredY = y;
-//             부모 레이아웃을 스크롤시켜 마치 뷰객체(오브젝트)가 움직이는것처럼 보이게 한다
-//             저장해둔 예전값과 현재값의 차를 넣어 변화를 감지한다
-
-            img.scrollBy((int) -((mX - filteredX) * 130), (int) -((mY - filteredY) * 40));
-//            img.setTranslationX((int) -((mX - filteredX) * 200));
-//            img.setTranslationY((int) -((mY - filteredY) * 100));
-
-            imgEdge.setTranslationX((int) ((mX - filteredX) * 100));
-            imgEdge.setTranslationY((int) -((mY - filteredY) * 50));
-
-            // 예전값을 저장한다
-            mX = filteredX;
-            mY = filteredY;
-
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.zoom1:
+                    Zoomlevel(1f);
+                    break;
+                case R.id.zoom2:
+                    Zoomlevel(2f);
+                    break;
+                case R.id.zoom3:
+                    Zoomlevel(3f);
+                    break;
+                case R.id.zoom4:
+                    Zoomlevel(4f);
+                    break;
+                case R.id.zoom5:
+                    Zoomlevel(5f);
+                    break;
+            }
         }
     };
 
-}
+    //줌 음성 리스너
+    private View.OnClickListener ZoomLevel_Move_Voice = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.imageStart:
+                    sensor_control = true;
+                    Stopimg.setVisibility(View.GONE);
+                    break;
+                case R.id.imageStop:
+                    sensor_control = false;
+                    Stopimg.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.zoomV1:
+                    Zoomlevel(1f);
+                    break;
+                case R.id.zoomV2:
+                    Zoomlevel(2f);
+                    break;
+                case R.id.zoomV3:
+                    Zoomlevel(3f);
+                    break;
+                case R.id.zoomV4:
+                    Zoomlevel(4f);
+                    break;
+                case R.id.zoomV5:
+                    Zoomlevel(5f);
+                    break;
+            }
+        }
+    };
 
+    //미니맵 그리기 메소드
+    private void miniMapDraw() {
+        Glide.with(this).load(getIntent().getStringExtra("picturePath")).into(miniView);
+    }
+
+
+
+
+    //줌레벨 적용 메소드
+    private void Zoomlevel(float num) {
+        mZoomcontrol.zoomlevel(num);
+    }
+
+    private void init() {
+        //미니맵뷰
+        mRelativeLayout = findViewById(R.id.mRelativelayout);
+        //줌 버튼
+        Zoom1 = findViewById(R.id.zoom1);
+        Zoom2 = findViewById(R.id.zoom2);
+        Zoom3 = findViewById(R.id.zoom3);
+        Zoom4 = findViewById(R.id.zoom4);
+        Zoom5 = findViewById(R.id.zoom5);
+        //센서 텍스트
+        imageM = findViewById(R.id.imageStart);
+        imageP = findViewById(R.id.imageStop);
+        //센서 리스너
+        imageM.setOnClickListener(ZoomLevel_Move_Voice);
+        imageP.setOnClickListener(ZoomLevel_Move_Voice);
+        //정지버튼
+        Stopimg = findViewById(R.id.stop_img);
+        //줌 텍스트
+        ZoomV1 = findViewById(R.id.zoomV1);
+        ZoomV2 = findViewById(R.id.zoomV2);
+        ZoomV3 = findViewById(R.id.zoomV3);
+        ZoomV4 = findViewById(R.id.zoomV4);
+        ZoomV5 = findViewById(R.id.zoomV5);
+        //줌 버튼 리스너
+        Zoom1.setOnClickListener(ZoomLevel_moveControll);
+        Zoom2.setOnClickListener(ZoomLevel_moveControll);
+        Zoom3.setOnClickListener(ZoomLevel_moveControll);
+        Zoom4.setOnClickListener(ZoomLevel_moveControll);
+        Zoom5.setOnClickListener(ZoomLevel_moveControll);
+        //줌 음성 리스너
+        ZoomV1.setOnClickListener(ZoomLevel_Move_Voice);
+        ZoomV2.setOnClickListener(ZoomLevel_Move_Voice);
+        ZoomV3.setOnClickListener(ZoomLevel_Move_Voice);
+        ZoomV4.setOnClickListener(ZoomLevel_Move_Voice);
+        ZoomV5.setOnClickListener(ZoomLevel_Move_Voice);
+
+
+        mTiltScrollController = new TiltScrollController(getApplicationContext(), this);
+
+        //뷰 에 올리기
+        v = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.image_minimap, null, false);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        miniView = v.findViewById(R.id.minimapV);
+        //줌컨트롤 연결
+        mZoomcontrol = new ZoomController(this);
+        mZoomcontrol.addView(v);
+        mZoomcontrol.setLayoutParams(layoutParams);
+        //미니맵 표시
+        mZoomcontrol.setMiniMapEnabled(true);
+        //최대 줌
+        mZoomcontrol.setMaxZoom(5f);
+        //미니맵 크기지정
+        mZoomcontrol.setMiniMapHeight(500);
+        //미니맵 추가
+        mRelativeLayout.addView(mZoomcontrol);
+
+
+    }
+
+    @Override
+    public void onTilt(int x, int y, float delta) {
+        if (sensor_control) {
+
+            mZoomcontrol.Move_Sensor(-x * 4, -y * 4);
+        }
+    }
+}
 
 
 

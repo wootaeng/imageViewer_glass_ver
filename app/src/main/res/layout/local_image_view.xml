@@ -1,152 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mRelativelayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-
-    <!--
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+    <ImageView
+        android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/image">
-
-    </com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView>
-    -->
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            />
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="100dp"
-            android:id="@+id/miniImg"
-            android:layout_gravity="right"
-            android:layout_marginRight="40px"
-            android:layout_marginTop="60px"
-            android:adjustViewBounds="true"/>
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="75dp"
-            android:id="@+id/miniedge"
-            android:layout_gravity="right"
-            android:layout_marginRight="40px"
-            android:layout_marginTop="75px"
-            android:src="@drawable/edge_boarder"
-            android:background="@drawable/edge"
-            />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/zoom"
-                android:layout_width="65dp"
-                android:layout_height="30dp"
-                android:background="@color/purple_500"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="20dp"
-                android:text="@string/zoom"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/zoom1"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/zoom"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:text="1"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
-
-            <Button
-                android:id="@+id/zoom2"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/zoom"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_toEndOf="@+id/zoom1"
-                android:text="2"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
-
-            <Button
-                android:id="@+id/zoom3"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/zoom"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="9dp"
-                android:layout_toEndOf="@+id/zoom2"
-                android:text="3"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
-
-            <Button
-                android:id="@+id/zoom4"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/zoom"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_toEndOf="@+id/zoom3"
-                android:text="4"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
-
-            <Button
-                android:id="@+id/zoom5"
-                android:layout_width="35dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/zoom"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:layout_toEndOf="@+id/zoom4"
-                android:text="5"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
+        android:layout_height="match_parent"/>
 
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/zoom1"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@id/zoom2"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/ic_one"
+        />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/zoom2"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@id/zoom3"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/ic_two"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/zoom3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@id/zoom4"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/ic_three"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/zoom4"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@id/zoom5"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/ic_four"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/zoom5"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/ic_five"
+        />
+    <TextView
+        android:id="@+id/imageStop"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:text="@string/imagestop"
+        />
 
-        </RelativeLayout>
+    <TextView
+        android:id="@+id/imageStart"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:text="@string/imagestart"
+        />
+    <Button
+        android:id="@+id/stop_img"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/stop_img"
+        android:visibility="gone"/>
 
-        <Button
-            android:id="@+id/viewFix"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="13px"
-            android:layout_gravity="center|bottom"
-            android:gravity="center"
-            android:text="화면 고정"
-            android:textSize="20px"
-            android:visibility="gone"
-            android:textStyle="bold"/>
-        <Button
-            android:id="@+id/viewFixoff"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="13px"
-            android:layout_gravity="center|bottom"
-            android:gravity="center"
-            android:text="화면 고정해제"
-            android:textSize="20px"
-            android:visibility="gone"
-            android:textStyle="bold"/>
-    </FrameLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/zoomV1"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:text="@string/zoom1"/>
+        <TextView
+            android:id="@+id/zoomV2"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:text="@string/zoom2"/>
+        <TextView
+            android:id="@+id/zoomV3"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:text="@string/zoom3"/>
+        <TextView
+            android:id="@+id/zoomV4"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:text="@string/zoom4"/>
+        <TextView
+            android:id="@+id/zoomV5"
+            android:layout_width="1dp"
+            android:layout_height="1dp"
+            android:text="@string/zoom5"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+</RelativeLayout>
