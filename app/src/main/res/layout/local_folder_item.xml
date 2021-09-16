@@ -11,22 +11,22 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/folderCard"
-        android:layout_width="210dp"
-        android:layout_height="220dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="1dp"
         app:cardCornerRadius="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/folderPic"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="10"
+                android:layout_weight="8"
                 android:src="@mipmap/ic_launcher"/>
             <TextView
                 android:id="@+id/folderName"
@@ -37,8 +37,8 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="folder name"
-                android:textColor="@color/white"
-                android:textSize="15sp"/>
+                android:textColor="@color/black"
+                android:textSize="12sp"/>
             <TextView
                 android:id="@+id/folderSize"
                 android:layout_width="match_parent"
@@ -48,8 +48,8 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="folder name"
-                android:textColor="@color/white"
-                android:textSize="15sp" />
+                android:textColor="@color/black"
+                android:textSize="12sp" />
 
         </LinearLayout>
 

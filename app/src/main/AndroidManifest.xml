@@ -28,12 +28,9 @@
         <activity
             android:name=".view.LocalImageList"
             android:screenOrientation="landscape" />
-        <activity
-            android:name=".view.LocalGallery"
-            android:screenOrientation="landscape" />
+
         <activity
             android:name=".view.LocalImage"
-            android:theme="@style/Theme.WattViewer2.NoActionBar"
             android:screenOrientation="landscape"/>
 
     </application>
