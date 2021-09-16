@@ -36,14 +36,14 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements itemClickListener, TiltScrollController.ScrollListener{
 
-    RecyclerView recyclerView;
-    TextView empty;
-    ImageView select_box;
-    Button select;
+    private RecyclerView recyclerView;
+    private TextView empty;
+    private ImageView select_box;
+    private Button select;
     private RecyclerView.Adapter folderAdapter;
-    LocalfolderAdapter folderadapter;
-    TiltScrollController mScrollController;
-    ScrollZoomLayoutManager scrollZoomLayoutManager;
+    private LocalfolderAdapter folderadapter;
+    private TiltScrollController mScrollController;
+    private ScrollZoomLayoutManager scrollZoomLayoutManager;
     private SnapHelper snapHelper;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
@@ -98,17 +98,7 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
 
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        mScrollController.requestAllSensors();
-//        recyclerView.smoothScrollBy(sensor_statistic, 0);
-//    }
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        mScrollController.releaseAllSensors();
-//    }
+
 
     private ArrayList<LocalFolderData> getPicturePaths() {
         ArrayList<LocalFolderData> picFolders = new ArrayList<>();
@@ -154,12 +144,6 @@ public class MainActivity extends AppCompatActivity implements itemClickListener
             Log.d("picture folders",picFolders.get(i).getFolderName()+" and path = "+picFolders.get(i).getPath()+" "+picFolders.get(i).getNumberOfPics());
         }
 
-        //reverse order ArrayList
-       /* ArrayList<imageFolder> reverseFolders = new ArrayList<>();
-
-        for(int i = picFolders.size()-1;i > reverseFolders.size()-1;i--){
-            reverseFolders.add(picFolders.get(i));
-        }*/
 
         return picFolders;
     }

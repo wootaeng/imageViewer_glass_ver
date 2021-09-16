@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
@@ -20,6 +21,7 @@ import com.peng.plant.wattviewer2.R;
 import com.peng.plant.wattviewer2.adapter.LocalImageAdapter;
 import com.peng.plant.wattviewer2.listener.CenterScrollListener;
 import com.peng.plant.wattviewer2.data.LocalimageData;
+import com.peng.plant.wattviewer2.util.MarginDecoration;
 import com.peng.plant.wattviewer2.util.ScrollZoomLayoutManager;
 import com.peng.plant.wattviewer2.controller.TiltScrollController;
 import com.peng.plant.wattviewer2.listener.itemClickListener;
@@ -30,17 +32,17 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
     private final String TAG = this.getClass().getSimpleName();
 
 
-    RecyclerView imageRecycler;
-    ArrayList<LocalimageData> allimages;
-    ProgressBar load;
-    String folderPath;
-    TextView folderName;
-    TiltScrollController mTiltScrollController;
-    ScrollZoomLayoutManager scrollZoomLayoutManager;
-    SnapHelper snapHelper;
-    ImageView select_box;
-    Button select;
-    LocalImageAdapter adapter;
+    private RecyclerView imageRecycler;
+    private ArrayList<LocalimageData> allimages;
+    private ProgressBar load;
+    private String folderPath;
+    private TextView folderName;
+    private TiltScrollController mTiltScrollController;
+    private ScrollZoomLayoutManager scrollZoomLayoutManager;
+    private SnapHelper snapHelper;
+    private ImageView select_box;
+    private Button select;
+    private LocalImageAdapter adapter;
 
 
     @Override
@@ -73,9 +75,6 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
         mTiltScrollController = new TiltScrollController(getApplicationContext(),this);
         scrollZoomLayoutManager = new ScrollZoomLayoutManager(this, Dp2px(5));
 
-//        imageRecycler.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-//        imageRecycler.addItemDecoration(new MarginDecoration(this));
-//        imageRecycler.hasFixedSize();
         imageRecycler.addOnScrollListener(new CenterScrollListener());
         imageRecycler.setLayoutManager(scrollZoomLayoutManager);
         load = findViewById(R.id.loader);
@@ -95,7 +94,6 @@ public class LocalImageList extends AppCompatActivity implements itemClickListen
                     move.putExtra("picturePath", allimages.get(scrollZoomLayoutManager.getCurrentPosition()).getPicturePath());
                     move.putExtra("imageUri", allimages.get(scrollZoomLayoutManager.getCurrentPosition()).getImageUri());
                     startActivity(move);
-
 
                 }
             });

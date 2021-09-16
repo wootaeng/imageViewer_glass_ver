@@ -59,11 +59,7 @@ public class LocalImage extends AppCompatActivity implements TiltScrollControlle
         //미니맵 그리기
         miniMapDraw();
 
-
     }
-
-
-
 
     //줌 버튼 리스너
     private View.OnClickListener ZoomLevel_moveControll = new View.OnClickListener() {
